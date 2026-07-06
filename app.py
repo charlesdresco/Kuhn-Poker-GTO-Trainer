@@ -1,29 +1,23 @@
+# app.py
+"""
+Application Streamlit : joue une main de Kuhn Poker contre une IA entraînée
+par Counterfactual Regret Minimization (CFR), et affiche à chaque décision
+la recommandation théorique optimale (GTO) calculée par l'algorithme.
+
+Pour lancer en local :
+    pip install -r requirements.txt
+    streamlit run app.py
+"""
+
 import json
 import random
+
 import streamlit as st
 
 st.set_page_config(page_title="Kuhn Poker - IA entraînée par CFR", page_icon=":spades:")
 
-STRATEGY = {
-  "1": {
-    "root": [0.8028800630713723, 0.19711993692862764],
-    "p": [0.6627232947905609, 0.3372767052094392],
-    "b": [0.9999774147406459, 0.0000225852593540616],
-    "pb": [0.9999953580254475, 0.0000046419745525646]
-  },
-  "2": {
-    "root": [0.9997425501379253, 0.0002574498620746811],
-    "p": [0.9999147299871060, 0.0000852700128940598],
-    "b": [0.6602374614836289, 0.3397625385163711],
-    "pb": [0.4676147094753758, 0.5323852905246242]
-  },
-  "3": {
-    "root": [0.3997072855024736, 0.6002927144975264],
-    "p": [0.0000074803267407, 0.9999925196732593],
-    "b": [0.0000074803267407, 0.9999925196732593],
-    "pb": [0.0000094184089468, 0.9999905815910531]
-  }
-}
+with open("strategy.json") as f:
+    STRATEGY = json.load(f)
 
 CARD_NAMES = {1: "Valet", 2: "Dame", 3: "Roi"}
 
@@ -115,7 +109,7 @@ def resolve_hand(h):
     elif h == "pbp":
         net = -1
         outcome = "Vous vous couchez, l'IA remporte la mise."
-    else:
+    else:  # pbb
         net = 2 if human_higher else -2
         outcome = "Showdown après relance suivie, vous gagnez." if human_higher else "Showdown après relance suivie, l'IA gagne."
 
